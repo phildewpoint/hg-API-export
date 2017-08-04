@@ -1,8 +1,8 @@
 from appJar import gui
 import datetime, os
-from get_Member import loop_api
+from get_API import loop_api
 
-# lists
+# these are all the lists available to initialize elsewhere in the routine
 apiList = [
     "Member Activity",
     "CheckIn Cycles",
@@ -10,6 +10,7 @@ apiList = [
     "Goal Cycles",
     "Goals" 
 ]
+# each of these lists reflect the columns available to recall in the API
 Member_Activity_List = [
     "ID",
     "FullName",
@@ -93,6 +94,7 @@ Goals_List = [
     "PercentCompleted",
     "Weight"
 ]
+# used for the Submit/Cancel UI buttons
 goBtn = [
     "Submit",
     "Cancel"
@@ -145,9 +147,9 @@ def changer(rb):
     """Changes the list box values when a radio button is selected"""
     val = api_list(title=app.getRadioButton(rb))
     app.updateListItems(title="field_box", items=val)
+
+
 # initialize and launch GUI
-
-
 app = gui()
 apiKey = app.addLabelEntry(title="API Key")
 app.addHorizontalSeparator(colour=None)
