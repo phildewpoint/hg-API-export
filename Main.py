@@ -13,7 +13,7 @@ apiList = [
 # each of these lists reflect the columns available to recall in the API
 # TODO - encode the array level for these columns so the API can understand which level to extract (top, lvl 1, 2, etc)
 Member_Activity_List = [
-    "ID",
+    "Id",
     "FullName",
     "UserName",
     "EmployeeId",
@@ -24,12 +24,18 @@ Member_Activity_List = [
     "Role",
     "Status",
     "LastActiveDate",
-    "ManagerEmpId"
+    [
+        "Managers",
+        [
+            "FullName",
+            "EmployeeId"
+        ]
+    ]
 ]
 # the checkIn sessions API (https://api.highground.com/#api-CheckIn-GetCheckInSessions) is a good example for nesting
 # the ID and Cycle both live in the Data array. the 'Reviewee' data lives inside the 'Reviewee' object
 CheckIn_Cycles_List = [
-    "ID",
+    "Id",
     "Name",
     "Description",
     "Status",
@@ -40,26 +46,36 @@ CheckIn_Cycles_List = [
     "ArchivedDate"
 ]
 CheckIn_Sessions_List = [
-    "ID",
+    "Id",
     "Cycle",
     "Status",
     "CreatedDate",
     "ModifiedDate",
     "CompletedDate",
-    "RevieweeName",
-    "RevieweeEmpId",
-    "RevieweeSubmittedDate",
-    "RevieweeStatus",
-    "RevieweeNeedsSignOff",
-    "RevieweeCheckInCompleted"
-    "ManagerName",
-    "ManagerEmpId",
-    "ManagerViewedDate",
-    "ManagerStatus",
-    "ManagerCheckInCompleted"
+    [
+        "Reviewee",
+        [
+         "Name",
+         "EmployeeId",
+         "SubmittedDate",
+         "Status",
+         "NeedsSignOff",
+         "CheckInCompleted"
+        ]
+     ],
+    [
+        "Manager",
+        [
+            "Name",
+            "EmployeeId",
+            "ViewiedDate",
+            "Status",
+            "CheckInCompleted"
+        ]
+    ],
 ]
 Goal_Cycles_List = [
-    "ID",
+    "Id",
     "Name",
     "Description",
     "Status",
@@ -67,10 +83,10 @@ Goal_Cycles_List = [
     "RecurrenceFrequency",
     "ClosePromptDate",
     "ClosePeriod",
-    "TotalParticipants",
-    "TotalParticipantWithGoals",
-    "TotalParticipantWitNotStartedGoals",
-    "TotalGoalNumber",
+    "CycleStats: TotalParticipants",
+    "CycleStats: TotalParticipantWithGoals",
+    "CycleStats: TotalParticipantWitNotStartedGoals",
+    "CycleStats: TotalGoalNumber",
     "TotalEditingGoalNumber",
     "TotalGoalsSubmittedForApprovalToSet",
     "TotalGoalsInProgress",
