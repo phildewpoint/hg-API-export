@@ -12,7 +12,7 @@ apiList = [
 ]
 # each of these lists reflect the columns available to recall in the API
 Member_Activity_List = [
-    "ID",
+    "Id",
     "FullName",
     "UserName",
     "EmployeeId",
@@ -26,7 +26,7 @@ Member_Activity_List = [
     "ManagerEmpId"
 ]
 CheckIn_Cycles_List = [
-    "ID",
+    "Id",
     "Name",
     "Description",
     "Status",
@@ -37,7 +37,7 @@ CheckIn_Cycles_List = [
     "ArchivedDate"
 ]
 CheckIn_Sessions_List = [
-    "ID",
+    "Id",
     "Cycle",
     "Status",
     "CreatedDate",
@@ -56,7 +56,7 @@ CheckIn_Sessions_List = [
     "ManagerCheckInCompleted"
 ]
 Goal_Cycles_List = [
-    "ID",
+    "Id",
     "Name",
     "Description",
     "Status",
@@ -78,7 +78,7 @@ Goal_Cycles_List = [
     "AvgGoalCompletePercentage"
 ]
 Goals_List = [
-    "ID",
+    "Id",
     "Name",
     "Description",
     "CycleId",
