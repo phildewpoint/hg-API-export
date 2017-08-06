@@ -11,7 +11,8 @@ apiList = [
     "Goals" 
 ]
 # each of these lists reflect the columns available to recall in the API
-# TODO - encode the array level for these columns so the API can understand which level to extract (top, lvl 1, 2, etc)
+# TODO - review nested lists below. get_API.py needs update to read and print nesting in this format
+# Example is listed below for 'Member Activity' - manager data is nested
 Member_Activity_List = [
     "Id",
     "FullName",
@@ -32,8 +33,6 @@ Member_Activity_List = [
         ]
     ]
 ]
-# the checkIn sessions API (https://api.highground.com/#api-CheckIn-GetCheckInSessions) is a good example for nesting
-# the ID and Cycle both live in the Data array. the 'Reviewee' data lives inside the 'Reviewee' object
 CheckIn_Cycles_List = [
     "Id",
     "Name",
@@ -164,6 +163,7 @@ def api_list(title):
         return Goals_List
 
 
+# TODO - need to update the logic here to loop through each nested array in the master list as they're now multi-level
 def changer(rb):
     """Changes the list box values when a radio button is selected"""
     val = api_list(title=app.getRadioButton(rb))
@@ -180,8 +180,8 @@ app.addLabel(title="guiLabel", text="Which API do you want to extract?")
 # Creates 1 radio button per list item
 for i in apiList:
     app.addRadioButton(title="apiList", name=i, )
-# creates multi-select list that defaults the first set of columns for Member Activity API
-app.addListBox(name="field_box", values=Member_Activity_List)
+# creates multi-select list
+app.addListBox(name="field_box", values="")
 # allows list box to act as multi-select
 app.setListBoxMulti(title="field_box", multi=True)
 # when radio button changes, call function 'changer' to change the columns
