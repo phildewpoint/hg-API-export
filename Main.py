@@ -11,8 +11,6 @@ apiList = [
     "Goals" 
 ]
 # each of these lists reflect the columns available to recall in the API
-# TODO - review nested lists below. get_API.py needs update to read and print nesting in this format
-# Example is listed below for 'Member Activity' - manager data is nested
 Member_Activity_List = [
     "Id",
     "FullName",
@@ -25,13 +23,14 @@ Member_Activity_List = [
     "Role",
     "Status",
     "LastActiveDate",
-    [
-        "Managers",
+    {
+        "Managers":
         [
             "FullName",
+            "Email",
             "EmployeeId"
         ]
-    ]
+    },
 ]
 CheckIn_Cycles_List = [
     "Id",
@@ -50,28 +49,28 @@ CheckIn_Sessions_List = [
     "Status",
     "CreatedDate",
     "ModifiedDate",
-    "CompletedDate",
-    [
-        "Reviewee",
-        [
-         "Name",
-         "EmployeeId",
-         "SubmittedDate",
-         "Status",
-         "NeedsSignOff",
-         "CheckInCompleted"
-        ]
-     ],
-    [
-        "Manager",
-        [
-            "Name",
-            "EmployeeId",
-            "ViewiedDate",
-            "Status",
-            "CheckInCompleted"
-        ]
-    ],
+    {
+        "Reviewee":
+            [
+                "Name",
+                "EmployeeId",
+                "DueDate",
+                "SubmittedDate",
+                "Status",
+                "NeedsSignOff",
+                "RevieweeCheckInCompleted"
+            ]
+    },
+    {
+        "Manager":
+            [
+                "Name",
+                "EmployeeId",
+                "ViewedDate",
+                "Status",
+                "ManagerCheckInCompleted"
+            ]
+    }
 ]
 Goal_Cycles_List = [
     "Id",
@@ -82,41 +81,61 @@ Goal_Cycles_List = [
     "RecurrenceFrequency",
     "ClosePromptDate",
     "ClosePeriod",
-    "CycleStats: TotalParticipants",
-    "CycleStats: TotalParticipantWithGoals",
-    "CycleStats: TotalParticipantWitNotStartedGoals",
-    "CycleStats: TotalGoalNumber",
-    "TotalEditingGoalNumber",
-    "TotalGoalsSubmittedForApprovalToSet",
-    "TotalGoalsInProgress",
-    "TotalGoalsPendingClosure",
-    "TotalGoalsSubmittedForApprovalToClose",
-    "TotalGoalsClosed",
-    "TotalGoalsOntime",
-    "AvgGoalCompletePercentage"
+    {
+        "CycleStatus":
+            [
+                "TotalParticipants",
+                "TotalParticipantsWithGoals",
+                "TotalParticipantsWithNotStartedGoals",
+                "TotalGoalNumber",
+                "TotalEditingGoalNumber",
+                "TotalGoalsSubmittedForApprovalToSet",
+                "TotalGoalsInProgress",
+                "TotalGoalsPendingClosure",
+                "TotalGoalsSubmittedForApprovalToClose",
+                "TotalGoalsClosed",
+                "TotalGoalsOntime",
+                "AvgGoalCompletePercentage"
+            ]
+    },
 ]
 Goals_List = [
-    "ID",
+    "Id",
     "Name",
     "Description",
+    "CycleName",
     "CycleId",
     "Status",
     "Visibility",
     "CreatedDate",
     "ModifiedDate",
-    "LastCheckInDate",
     "CheckInFrequency",
-    "UpToDate"
-    "GoalOwnerEmpId",
-    "ApproverEmpId",
+    "UpToDate",
+    {
+        "Owner":
+            [
+                "FullName",
+                "EmployeeId"
+            ]
+    },
+    {
+        "Approver":
+            [
+                "FullName",
+                "EmployeeId"
+            ]
+    },
     "PercentCompleted",
-    "Weight"
+    "Weight",
+    "ProgressStatus"
 ]
 # used for the Submit/Cancel UI buttons
 goBtn = [
     "Submit",
     "Cancel"
 ]
+
+button_columns = []
 
 
 def launch_api(button):
@@ -162,12 +181,31 @@ def api_list(title):
     elif title == "Goals":
         return Goals_List
 
-
-# TODO - need to update the logic here to loop through each nested array in the master list as they're now multi-level
+# TODO - getting a memory leak issue. Need to ensure each call clears the local variables
 def changer(rb):
     """Changes the list box values when a radio button is selected"""
+    # get the column listing, flatten it, display to user
     val = api_list(title=app.getRadioButton(rb))
-    app.updateListItems(title="field_box", items=val)
+    cols = flatten(val)
+    app.updateListItems(title="field_box", items=cols)
+
+
+def flatten(col_listing, prefix=None):
+    for items in col_listing:
+        if type(items) == str:
+            if prefix is None:
+                button_columns.append(items)
+            else:
+                button_columns.append(prefix + items)
+        else:
+            for k, v in items.items():
+                combo = k + ": "
+                if prefix is None:
+                    flatten(col_listing=v, prefix=combo)
+                else:
+                    combo = prefix + k + ": "
+                    flatten(col_listing=v, prefix=combo)
+    return button_columns
 
 
 # create GUI object from appJar
