@@ -23,7 +23,14 @@ Member_Activity_List = [
     "Role",
     "Status",
     "LastActiveDate",
-    "ManagerEmpId"
+    {
+        "Managers":
+        [
+            "FullName",
+            "Email",
+            "EmployeeId"
+        ]
+    },
 ]
 CheckIn_Cycles_List = [
     "Id",
@@ -42,18 +49,28 @@ CheckIn_Sessions_List = [
     "Status",
     "CreatedDate",
     "ModifiedDate",
-    "CompletedDate",
-    "RevieweeName",
-    "RevieweeEmpId",
-    "RevieweeSubmittedDate",
-    "RevieweeStatus",
-    "RevieweeNeedsSignOff",
-    "RevieweeCheckInCompleted"
-    "ManagerName",
-    "ManagerEmpId",
-    "ManagerViewedDate",
-    "ManagerStatus",
-    "ManagerCheckInCompleted"
+    {
+        "Reviewee":
+            [
+                "Name",
+                "EmployeeId",
+                "DueDate",
+                "SubmittedDate",
+                "Status",
+                "NeedsSignOff",
+                "RevieweeCheckInCompleted"
+            ]
+    },
+    {
+        "Manager":
+            [
+                "Name",
+                "EmployeeId",
+                "ViewedDate",
+                "Status",
+                "ManagerCheckInCompleted"
+            ]
+    }
 ]
 Goal_Cycles_List = [
     "Id",
@@ -64,35 +81,53 @@ Goal_Cycles_List = [
     "RecurrenceFrequency",
     "ClosePromptDate",
     "ClosePeriod",
-    "TotalParticipants",
-    "TotalParticipantWithGoals",
-    "TotalParticipantWitNotStartedGoals",
-    "TotalGoalNumber",
-    "TotalEditingGoalNumber",
-    "TotalGoalsSubmittedForApprovalToSet",
-    "TotalGoalsInProgress",
-    "TotalGoalsPendingClosure",
-    "TotalGoalsSubmittedForApprovalToClose",
-    "TotalGoalsClosed",
-    "TotalGoalsOntime",
-    "AvgGoalCompletePercentage"
+    {
+        "CycleStatus":
+            [
+                "TotalParticipants",
+                "TotalParticipantsWithGoals",
+                "TotalParticipantsWithNotStartedGoals",
+                "TotalGoalNumber",
+                "TotalEditingGoalNumber",
+                "TotalGoalsSubmittedForApprovalToSet",
+                "TotalGoalsInProgress",
+                "TotalGoalsPendingClosure",
+                "TotalGoalsSubmittedForApprovalToClose",
+                "TotalGoalsClosed",
+                "TotalGoalsOntime",
+                "AvgGoalCompletePercentage"
+            ]
+    },
 ]
 Goals_List = [
     "Id",
     "Name",
     "Description",
+    "CycleName",
     "CycleId",
     "Status",
     "Visibility",
     "CreatedDate",
     "ModifiedDate",
-    "LastCheckInDate",
     "CheckInFrequency",
-    "UpToDate"
-    "GoalOwnerEmpId",
-    "ApproverEmpId",
+    "UpToDate",
+    {
+        "Owner":
+            [
+                "FullName",
+                "EmployeeId"
+            ]
+    },
+    {
+        "Approver":
+            [
+                "FullName",
+                "EmployeeId"
+            ]
+    },
     "PercentCompleted",
-    "Weight"
+    "Weight",
+    "ProgressStatus"
 ]
 # used for the Submit/Cancel UI buttons
 goBtn = [
@@ -100,14 +135,18 @@ goBtn = [
     "Cancel"
 ]
 
+button_columns = []
 
-def first_press(button):
+
+def launch_api(button):
     if button == "Cancel":
         app.stop()
     else:
         # create and return file object
         file = create_file(api_name=app.getRadioButton("apiList"))
+        # get the list of columns user selected in UI
         col_list = app.getListItems(title="field_box")
+        # based on the selected radio button, call a specific API
         if app.getRadioButton(title="apiList") == "Member Activity":
             loop_api(api_key=apiKey, file=file, col_list=col_list, end_pt="MembersActivity")
         elif app.getRadioButton(title="apiList") == "CheckIn Cycles":
@@ -142,25 +181,50 @@ def api_list(title):
     elif title == "Goals":
         return Goals_List
 
-
+# TODO - getting a memory leak issue. Need to ensure each call clears the local variables
 def changer(rb):
     """Changes the list box values when a radio button is selected"""
+    # get the column listing, flatten it, display to user
     val = api_list(title=app.getRadioButton(rb))
-    app.updateListItems(title="field_box", items=val)
+    cols = flatten(val)
+    app.updateListItems(title="field_box", items=cols)
 
 
-# initialize and launch GUI
+def flatten(col_listing, prefix=None):
+    for items in col_listing:
+        if type(items) == str:
+            if prefix is None:
+                button_columns.append(items)
+            else:
+                button_columns.append(prefix + items)
+        else:
+            for k, v in items.items():
+                combo = k + ": "
+                if prefix is None:
+                    flatten(col_listing=v, prefix=combo)
+                else:
+                    combo = prefix + k + ": "
+                    flatten(col_listing=v, prefix=combo)
+    return button_columns
+
+
+# create GUI object from appJar
 app = gui()
+# API uses a header value as password. Need to collect it from users
+# TODO - require user to enter the key. If blank, popup error box.
 apiKey = app.addLabelEntry(title="API Key")
 app.addHorizontalSeparator(colour=None)
 app.addLabel(title="guiLabel", text="Which API do you want to extract?")
+# Creates 1 radio button per list item
 for i in apiList:
     app.addRadioButton(title="apiList", name=i, )
-app.addLabel(title="fields", text="")
-app.addListBox(name="field_box", values=Member_Activity_List)
+# creates multi-select list
+app.addListBox(name="field_box", values="")
+# allows list box to act as multi-select
 app.setListBoxMulti(title="field_box", multi=True)
+# when radio button changes, call function 'changer' to change the columns
 app.setRadioButtonChangeFunction("apiList", changer)
 app.addLabel(title="dirLabel", text="You'll select the directory to save the file after clicking submit")
-app.addButtons(names=goBtn, funcs=first_press)
+app.addButtons(names=goBtn, funcs=launch_api)
 app.go()
 
