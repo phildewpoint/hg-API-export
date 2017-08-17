@@ -135,12 +135,14 @@ goBtn = [
     "Cancel"
 ]
 
-button_columns = []
-
 
 def launch_api(button):
     if button == "Cancel":
         app.stop()
+    elif not app.getEntry(name="API Key"):
+        app.infoBox(title="infoBox", message="Please add an API key before submitting.")
+    elif not app.getListItems(title="field_box"):
+        app.infoBox(title="infobox", message="Please select at least one column before submitting.")
     else:
         # create and return file object
         file = create_file(api_name=app.getRadioButton("apiList"))
@@ -181,37 +183,37 @@ def api_list(title):
     elif title == "Goals":
         return Goals_List
 
-# TODO - getting a memory leak issue. Need to ensure each call clears the local variables
+
 def changer(rb):
     """Changes the list box values when a radio button is selected"""
     # get the column listing, flatten it, display to user
     val = api_list(title=app.getRadioButton(rb))
-    cols = flatten(val)
+    list_store = []
+    cols = flatten(col_listing=val, list_storage=list_store)
     app.updateListItems(title="field_box", items=cols)
 
 
-def flatten(col_listing, prefix=None):
+def flatten(col_listing, list_storage, prefix=None):
     for items in col_listing:
         if type(items) == str:
             if prefix is None:
-                button_columns.append(items)
+                list_storage.append(items)
             else:
-                button_columns.append(prefix + items)
+                list_storage.append(prefix + items)
         else:
             for k, v in items.items():
                 combo = k + ": "
                 if prefix is None:
-                    flatten(col_listing=v, prefix=combo)
+                    flatten(col_listing=v, list_storage=list_storage, prefix=combo)
                 else:
                     combo = prefix + k + ": "
-                    flatten(col_listing=v, prefix=combo)
-    return button_columns
+                    flatten(col_listing=v, list_storage=list_storage, prefix=combo)
+    return list_storage
 
 
 # create GUI object from appJar
 app = gui()
 # API uses a header value as password. Need to collect it from users
-# TODO - require user to enter the key. If blank, popup error box.
 apiKey = app.addLabelEntry(title="API Key")
 app.addHorizontalSeparator(colour=None)
 app.addLabel(title="guiLabel", text="Which API do you want to extract?")
