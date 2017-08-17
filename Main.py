@@ -148,17 +148,18 @@ def launch_api(button):
         file = create_file(api_name=app.getRadioButton("apiList"))
         # get the list of columns user selected in UI
         col_list = app.getListItems(title="field_box")
-        # based on the selected radio button, call a specific API
+        # based on the selected radio button, call a specific API w/ key
+        api_key = app.getEntry(name="API Key")
         if app.getRadioButton(title="apiList") == "Member Activity":
-            loop_api(api_key=apiKey, file=file, col_list=col_list, end_pt="MembersActivity")
+            loop_api(api_key=api_key, file=file, col_list=col_list, end_pt="MembersActivity")
         elif app.getRadioButton(title="apiList") == "CheckIn Cycles":
-            loop_api(api_key=apiKey, file=file, col_list=col_list, end_pt="CheckInCycles/")
+            loop_api(api_key=api_key, file=file, col_list=col_list, end_pt="CheckInCycles/")
         elif app.getRadioButton(title="apiList") == "CheckIn Sessions":
-            loop_api(api_key=apiKey, file=file, col_list=col_list, end_pt="CheckInSessions/")
+            loop_api(api_key=api_key, file=file, col_list=col_list, end_pt="CheckInSessions/")
         elif app.getRadioButton(title="apiList") == "Goal Cycles":
-            loop_api(api_key=apiKey, file=file, col_list=col_list, end_pt="GoalCycles/")
+            loop_api(api_key=api_key, file=file, col_list=col_list, end_pt="GoalCycles/")
         elif app.getRadioButton(title="apiList") == "Goals":
-            loop_api(api_key=apiKey, file=file, col_list=col_list, end_pt="Goals/")
+            loop_api(api_key=api_key, file=file, col_list=col_list, end_pt="Goals/")
         app.stop()
 
 
@@ -214,7 +215,7 @@ def flatten(col_listing, list_storage, prefix=None):
 # create GUI object from appJar
 app = gui()
 # API uses a header value as password. Need to collect it from users
-apiKey = app.addLabelEntry(title="API Key")
+app.addLabelEntry(title="API Key")
 app.addHorizontalSeparator(colour=None)
 app.addLabel(title="guiLabel", text="Which API do you want to extract?")
 # Creates 1 radio button per list item
