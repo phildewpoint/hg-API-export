@@ -18,7 +18,7 @@ Member_Activity_List = [
     "EmployeeId",
     "LocationId",
     "LocationName",
-    "DepartmentID",
+    "DepartmentId",
     "DepartmentName",
     "Role",
     "Status",
@@ -160,7 +160,7 @@ def launch_api(button):
             loop_api(api_key=api_key, file=file, col_list=col_list, end_pt="GoalCycles/")
         elif app.getRadioButton(title="apiList") == "Goals":
             loop_api(api_key=api_key, file=file, col_list=col_list, end_pt="Goals/")
-        app.stop()
+        close_and_clean(file=file)
 
 
 def create_file(api_name=None,):
@@ -215,6 +215,13 @@ def flatten(col_listing, list_storage, prefix=None):
     return list_storage
 
 
+def close_and_clean(file):
+    file.close()
+    app.infoBox(title="Extract Complete!", message="Your file was dropped at: \n" + file.name)
+    app.stop()
+    quit()
+
+
 # create GUI object from appJar
 app = gui()
 # API uses a header value as password. Need to collect it from users
@@ -233,3 +240,4 @@ app.setRadioButtonChangeFunction("apiList", changer)
 app.addLabel(title="dirLabel", text="You'll select the directory to save the file after clicking submit")
 app.addButtons(names=goBtn, funcs=launch_api)
 app.go()
+
