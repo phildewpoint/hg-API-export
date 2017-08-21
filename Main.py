@@ -191,7 +191,7 @@ def changer(rb):
     val = api_list(title=app.getRadioButton(rb))
     list_store = []
     cols = flatten(col_listing=val, list_storage=list_store)
-    app.updateListItems(title="field_box", items=cols)
+    app.updateListBox(title="field_box", items=cols)
 
 
 def flatten(col_listing, list_storage, prefix=None):

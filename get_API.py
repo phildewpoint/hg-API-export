@@ -1,5 +1,6 @@
 import requests
 from addict import Dict
+from appJar import gui
 
 
 def get_api(mem_skip, api_key, end_pt):
@@ -22,6 +23,11 @@ def loop_api(api_key, file, col_list, end_pt):
     skip = 0
     api_resp = get_api(mem_skip=skip, api_key=api_key, end_pt=end_pt)
     # TODO - build in error handling for non-pass responses
+    if api_resp.status_code != 200:
+        status_error = gui()
+        texterr = "Status Code: " + str(api_resp.status_code) + "\n" + str(api_resp.content)
+        status_error.errorBox(title="Error Code Returned", message=texterr)
+        quit()
     total = api_resp.json().get('total')
     # run the API until all records are returned
     while skip < total:
