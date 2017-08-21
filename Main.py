@@ -165,10 +165,13 @@ def launch_api(button):
 
 def create_file(api_name=None,):
     mydir = app.directoryBox(title="myDirectory")
-    file_name = api_name + datetime.date.today().strftime("%d%m%Y")
-    file_path = os.path.join(mydir, file_name)
-    file = open(file_path, mode='w')
-    return file
+    if mydir is None:
+        quit()
+    else:
+        file_name = api_name + datetime.date.today().strftime("%d%m%Y")
+        file_path = os.path.join(mydir, file_name)
+        file = open(file_path, mode='w')
+        return file
 
 
 def api_list(title):
@@ -230,4 +233,3 @@ app.setRadioButtonChangeFunction("apiList", changer)
 app.addLabel(title="dirLabel", text="You'll select the directory to save the file after clicking submit")
 app.addButtons(names=goBtn, funcs=launch_api)
 app.go()
-
