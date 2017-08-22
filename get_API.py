@@ -19,6 +19,13 @@ def get_api(mem_skip, api_key, end_pt):
     return resp_val
 
 
+def buried_value(record, string, parent = None):
+    """This function takes the record, string to parse, and sub-level (for recursion). Each pass should dig down 1 level into the function"""
+    if ":" in string:
+        string.split(":")
+    return value
+
+
 def loop_api(api_key, file, col_list, end_pt):
     skip = 0
     api_resp = get_api(mem_skip=skip, api_key=api_key, end_pt=end_pt)
@@ -46,7 +53,11 @@ def loop_api(api_key, file, col_list, end_pt):
         # each response will return a list with up to 50 records, this loop through each node in the list
         for i in range(len(resp.data)):
             for j in range(0, len(col_list)):
-                file.write(str(resp.data[i][col_list[j]]))
+                if ":" in col_list[j]:
+                    # TODO convert 'print' to recursive function. send the record, concat string
+                    print("hello")
+                else:
+                    file.write(str(resp.data[i][col_list[j]]))
                 if j < len(col_list) - 1:
                     file.write(" | ")
                 if j == len(col_list) - 1:
