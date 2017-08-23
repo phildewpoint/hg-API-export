@@ -27,6 +27,7 @@ Member_Activity_List = [
         "Managers":
         [
             "FullName",
+            "MemberId"
             "Email",
             "EmployeeId"
         ]

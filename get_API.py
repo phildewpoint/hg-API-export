@@ -19,10 +19,10 @@ def get_api(mem_skip, api_key, end_pt):
     return resp_val
 
 
-def buried_value(record, string, parent = None):
-    """This function takes the record, string to parse, and sub-level (for recursion). Each pass should dig down 1 level into the function"""
-    if ":" in string:
-        string.split(":")
+def buried_value(record, string, parent=None):
+    """This function takes the record, string to parse, and parent. Each pass digs 1 level"""
+    # TODO = finish this function
+    # TODO - build error handler when API doesn't return one of the keys
     return value
 
 
