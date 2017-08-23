@@ -21,9 +21,27 @@ def get_api(mem_skip, api_key, end_pt):
 
 def buried_value(record, string, parent=None):
     """This function takes the record, string to parse, and parent. Each pass digs 1 level"""
-    # TODO = finish this function
-    # TODO - build error handler when API doesn't return one of the keys
-    return value
+    arry = string.split(":")
+    for val in range(len(arry)):
+        # get parent obj
+        if parent is None:
+            try:
+                parent = record[arry[0]]
+            except KeyError:
+                return "Not Found"
+        # parse out parent object
+        if type(parent) is list:
+            parent = parent[0]
+        # call child obj
+        try:
+            child = parent[arry[(val + 1)]]
+        except KeyError:
+            return "Not Found"
+        # if also parent, loop
+        if type(child) != str:
+            buried_value(record=record, string=string, parent=parent)
+        else:
+            return str(child)
 
 
 def loop_api(api_key, file, col_list, end_pt):
@@ -54,8 +72,7 @@ def loop_api(api_key, file, col_list, end_pt):
         for i in range(len(resp.data)):
             for j in range(0, len(col_list)):
                 if ":" in col_list[j]:
-                    # TODO convert 'print' to recursive function. send the record, concat string
-                    print("hello")
+                    buried_value(record=resp.data[i], string=col_list[j])
                 else:
                     file.write(str(resp.data[i][col_list[j]]))
                 if j < len(col_list) - 1:
