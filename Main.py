@@ -27,7 +27,7 @@ Member_Activity_List = [
         "Managers":
         [
             "FullName",
-            "MemberId"
+            "MemberId",
             "Email",
             "EmployeeId"
         ]
@@ -207,11 +207,11 @@ def flatten(col_listing, list_storage, prefix=None):
                 list_storage.append(prefix + items)
         else:
             for k, v in items.items():
-                combo = k + ": "
+                combo = k + ":"
                 if prefix is None:
                     flatten(col_listing=v, list_storage=list_storage, prefix=combo)
                 else:
-                    combo = prefix + k + ": "
+                    combo = prefix + k + ":"
                     flatten(col_listing=v, list_storage=list_storage, prefix=combo)
     return list_storage
 

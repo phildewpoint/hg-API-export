@@ -1,6 +1,7 @@
 import requests
 from addict import Dict
 from appJar import gui
+noVal = "None"
 
 
 def get_api(mem_skip, api_key, end_pt):
@@ -28,16 +29,21 @@ def buried_value(record, string, parent=None):
             try:
                 parent = record[arry[0]]
             except KeyError:
-                return "Not Found"
+                return noVal
         # parse out parent object
         if type(parent) is list:
-            parent = parent[0]
+            if len(parent) == 0:
+                return noVal
+            else:
+                parent = parent[0]
         # call child obj
         try:
             child = parent[arry[(val + 1)]]
         except KeyError:
-            return "Not Found"
+            return noVal
         # if also parent, loop
+        if len(child) == 0:
+            return noVal
         if type(child) != str:
             buried_value(record=record, string=string, parent=parent)
         else:
@@ -72,7 +78,7 @@ def loop_api(api_key, file, col_list, end_pt):
         for i in range(len(resp.data)):
             for j in range(0, len(col_list)):
                 if ":" in col_list[j]:
-                    buried_value(record=resp.data[i], string=col_list[j])
+                    file.write(buried_value(record=resp.data[i], string=col_list[j]))
                 else:
                     file.write(str(resp.data[i][col_list[j]]))
                 if j < len(col_list) - 1:
